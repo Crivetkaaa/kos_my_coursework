@@ -7,7 +7,7 @@ from utils.filereader import Reader
 from utils.database import DB
 
 
-class Interface(QtWidgets.QWidget):    
+class Interface(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
@@ -29,14 +29,14 @@ class Interface(QtWidgets.QWidget):
         DB.output_file(data)
 
         self.combobox()
-        
+
     def else_info(self, text='Что-то пошло не так.'):
         msg = QMessageBox()
         msg.setWindowTitle("TypeError")
         msg.setText(text)
         msg.setIcon(QMessageBox.Warning)
         msg.exec_()
-    
+
     def history(self):
         pass
 
@@ -55,16 +55,17 @@ class Interface(QtWidgets.QWidget):
             else:
                 text += f" OR product_name='{name}'"
         return DB.execute_res(text)
-      
+
     def get_count(self, checker, row):
         name = 'input_invoice' if checker else 'send_product'
         count = 4 if checker else 3
-        data_count = DB.execute_res(f"SELECT * FROM {name} WHERE product_name='{row[3]}'")
+        data_count = DB.execute_res(
+            f"SELECT * FROM {name} WHERE product_name='{row[3]}'")
         re_count = 0
         for row in data_count:
             re_count += int(row[count])
         return re_count
-            
+
     def generate_table(self, data):
         i = 0
         for row in data:
@@ -73,7 +74,7 @@ class Interface(QtWidgets.QWidget):
             in_count = self.get_count(True, row)
             out_count = self.get_count(False, row)
 
-            name =  QtWidgets.QTableWidgetItem(row[3])
+            name = QtWidgets.QTableWidgetItem(row[3])
             in_c = QtWidgets.QTableWidgetItem(str(in_count))
             out_c = QtWidgets.QTableWidgetItem(str(out_count))
             remainder = QtWidgets.QTableWidgetItem(str(in_count-out_count))
@@ -88,23 +89,24 @@ class Interface(QtWidgets.QWidget):
     def update_table(self, i, name, checker):
         table_name = 'input_invoice' if checker else 'send_product'
         num_list = [1, -1, 4, 2] if checker else [0, 2, 3, 3]
-        in_data = DB.execute_res(f"SELECT * FROM {table_name} WHERE product_name='{name}'")
+        in_data = DB.execute_res(
+            f"SELECT * FROM {table_name} WHERE product_name='{name}'")
         for row in in_data:
             self.ui.tableWidget.setRowCount(i+1)
-            company_name = QtWidgets.QTableWidgetItem(f"{row[num_list[0]]}, Номер накладной: {row[num_list[1]]}")
+            company_name = QtWidgets.QTableWidgetItem(
+                f"{row[num_list[0]]}, Номер накладной: {row[num_list[1]]}")
             count = QtWidgets.QTableWidgetItem(f"{row[num_list[2]]}")
             self.ui.tableWidget.setItem(i, 0, company_name)
             self.ui.tableWidget.setItem(i, num_list[3], count)
             i += 1
         return i
-        
+
     def table(self):
         try:
             data = self.get_DB_data()
             self.generate_table(data)
         except:
             self.else_info(text='Выберите товар')
-        
 
     def accept_product(self):
         name = self.ui.comboBox.currentText()
@@ -128,6 +130,7 @@ class Interface(QtWidgets.QWidget):
     def get_data(self):
         data = DB.execute_res("SELECT * FROM input_invoice")
         return data
+
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
