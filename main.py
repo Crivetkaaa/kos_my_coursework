@@ -31,21 +31,46 @@ class Interface(QtWidgets.QWidget):
                 text += f" OR product_name='{name}'"
         return DB.execute_res(text)
 
-    def get_count(self, checker, data, i):
+    def get_count(self, checker, row):
         name = 'input_invoice' if checker else 'send_product'
         count = 4 if checker else 3
-        data_count = DB.execute_res(f"SELECT * FROM {name} WHERE product_name='{data[i][3]}'")
+        data_count = DB.execute_res(f"SELECT * FROM {name} WHERE product_name='{row[3]}'")
         re_count = 0
         for row in data_count:
             re_count += int(row[count])
         return re_count
             
+    def generate_table(self, data, out_data):
+        i = 0
+        for row in data:
+            self.ui.tableWidget.setRowCount(i+1)
+            in_count = self.get_count(True, row)
+            out_count = self.get_count(False, row)
+
+            name =  QtWidgets.QTableWidgetItem(row[3])
+            in_c = QtWidgets.QTableWidgetItem(str(in_count))
+            out_c = QtWidgets.QTableWidgetItem(str(out_count))
+            remainder = QtWidgets.QTableWidgetItem(str(in_count-out_count))
+            self.ui.tableWidget.setItem(i, 0, name)
+            self.ui.tableWidget.setItem(i, 2, in_c)
+            self.ui.tableWidget.setItem(i, 3, out_c)
+            self.ui.tableWidget.setItem(i, 4, remainder)
+            # Приходные накладные
+            for row in data:
+                pass
+            for row in out_data:
+                i += 1
+                print(row)
+                self.ui.tableWidget.setRowCount(i+1)
+                name =  QtWidgets.QTableWidgetItem(f"{row[0]}б Наклодная: {row[2]}")
+                self.ui.tableWidget.setItem(i, 0, name)
+
+                
 
     def table(self):
         data = self.get_DB_data()
         out_data = self.get_DB_data(False)
-        print(data)
-        print(out_data)
+        self.generate_table(data, out_data)
        
 
     def accept_product(self):
