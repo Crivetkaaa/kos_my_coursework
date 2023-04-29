@@ -19,17 +19,10 @@ class Interface(QtWidgets.QWidget):
         self.ui.pushButton_2.clicked.connect(self.accept_product)
         self.ui.pushButton_3.clicked.connect(self.table)
 
-    def num(self, len):
-        num = [i for i in range(0, len)]
-        return num
-
-    def num_to_str(self, num):
-        str_num = [str(i+1) for i in num]
-        return str_num
-
-    def get_DB_data(self):
+    def get_DB_data(self, checker=True):
         count = 0
-        text = "SELECT * FROM input_invoice WHERE "
+        name = 'input_invoice' if checker else 'send_product'
+        text = f"SELECT * FROM {name} WHERE "
         for name in self.accept_data:
             if count < 1:
                 text += f"product_name='{name}'"
@@ -38,40 +31,22 @@ class Interface(QtWidgets.QWidget):
                 text += f" OR product_name='{name}'"
         return DB.execute_res(text)
 
+    def get_count(self, checker, data, i):
+        name = 'input_invoice' if checker else 'send_product'
+        count = 4 if checker else 3
+        data_count = DB.execute_res(f"SELECT * FROM {name} WHERE product_name='{data[i][3]}'")
+        re_count = 0
+        for row in data_count:
+            re_count += int(row[count])
+        return re_count
+            
 
     def table(self):
         data = self.get_DB_data()
-        len_data = len(data)
-
-        num = self.num(len_data)
-
-        self.ui.tableWidget.setRowCount(num[-1]+1)
-        self.ui.tableWidget.setVerticalHeaderLabels(self.num_to_str(num))
-
-        for i in num:
-            product_name = QtWidgets.QTableWidgetItem(data[i][3])
-            data_count = DB.execute_res(f"SELECT * FROM input_invoice WHERE product_name='{data[i][3]}'")
-            input_count = 0
-            for row in data_count:
-                input_count += int(row[4])
-            
-            data_count = DB.execute_res(f"SELECT * FROM send_product WHERE product_name='{data[i][3]}'")
-            output_count = 0
-            for row in data_count:
-                output_count += int(row[3])
-            remainder = input_count-output_count
-            print(remainder)
-            remainder = QtWidgets.QTableWidgetItem(str(remainder))
-            zero = QtWidgets.QTableWidgetItem(str(0))
-            input_count = QtWidgets.QTableWidgetItem(str(input_count))
-            output_count = QtWidgets.QTableWidgetItem(str(output_count))
-            
-            self.ui.tableWidget.setItem(i, 0, product_name)
-            self.ui.tableWidget.setItem(i, 1, zero)
-            self.ui.tableWidget.setItem(i, 2, input_count)
-            self.ui.tableWidget.setItem(i, 3, output_count)
-            self.ui.tableWidget.setItem(i, 4, remainder)
-
+        out_data = self.get_DB_data(False)
+        print(data)
+        print(out_data)
+       
 
     def accept_product(self):
         name = self.ui.comboBox.currentText()
