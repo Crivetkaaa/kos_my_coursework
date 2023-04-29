@@ -1,4 +1,4 @@
-from database import DB
+from utils.database import DB
 
 def create_table():
     DB.execute("""CREATE TABLE IF NOT EXISTS input_invoice (
@@ -17,8 +17,7 @@ def create_table():
     product_name TEXT,
     number TEXT,
     count INT,
-    price INT,
-    end_price INT
+    price INT
     );""")
     print('Таблицы успешно созданы!')
 

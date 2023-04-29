@@ -29,3 +29,4 @@ class DB:
         conn = sqlite3.connect('bot_db.sqlite')
         cur = conn.cursor()
         return conn, cur
+    
