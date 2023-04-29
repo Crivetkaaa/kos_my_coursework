@@ -16,8 +16,33 @@ class Interface(QtWidgets.QWidget):
         self.combobox()
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        self.ui.pushButton_2.clicked.connect(self.accept_product)
+        self.ui.pushButton_4.clicked.connect(self.history)
         self.ui.pushButton_3.clicked.connect(self.table)
+        self.ui.pushButton.clicked.connect(self.clear)
+        self.ui.pushButton_2.clicked.connect(self.accept_product)
+        self.ui.pushButton_5.clicked.connect(self.update_db)
+
+    def update_db(self):
+        data = Reader.read_file(True)
+        DB.input_file(data)
+        data = Reader.read_file(False)
+        DB.output_file(data)
+
+        self.combobox()
+        
+    def else_info(self, text='Что-то пошло не так.'):
+        msg = QMessageBox()
+        msg.setWindowTitle("TypeError")
+        msg.setText(text)
+        msg.setIcon(QMessageBox.Warning)
+        msg.exec_()
+    
+    def history(self):
+        pass
+
+    def clear(self):
+        self.accept_data.clear()
+        self.combobox()
 
     def get_DB_data(self, checker=True):
         count = 0
@@ -30,7 +55,7 @@ class Interface(QtWidgets.QWidget):
             else:
                 text += f" OR product_name='{name}'"
         return DB.execute_res(text)
-
+      
     def get_count(self, checker, row):
         name = 'input_invoice' if checker else 'send_product'
         count = 4 if checker else 3
@@ -40,9 +65,10 @@ class Interface(QtWidgets.QWidget):
             re_count += int(row[count])
         return re_count
             
-    def generate_table(self, data, out_data):
+    def generate_table(self, data):
         i = 0
         for row in data:
+            print(row)
             self.ui.tableWidget.setRowCount(i+1)
             in_count = self.get_count(True, row)
             out_count = self.get_count(False, row)
@@ -55,23 +81,30 @@ class Interface(QtWidgets.QWidget):
             self.ui.tableWidget.setItem(i, 2, in_c)
             self.ui.tableWidget.setItem(i, 3, out_c)
             self.ui.tableWidget.setItem(i, 4, remainder)
-            # Приходные накладные
-            for row in data:
-                pass
-            for row in out_data:
-                i += 1
-                print(row)
-                self.ui.tableWidget.setRowCount(i+1)
-                name =  QtWidgets.QTableWidgetItem(f"{row[0]}б Наклодная: {row[2]}")
-                self.ui.tableWidget.setItem(i, 0, name)
+            i += 1
+            i = self.update_table(i, row[3], True)
+            i = self.update_table(i, row[3], False)
 
-                
-
+    def update_table(self, i, name, checker):
+        table_name = 'input_invoice' if checker else 'send_product'
+        num_list = [1, -1, 4, 2] if checker else [0, 2, 3, 3]
+        in_data = DB.execute_res(f"SELECT * FROM {table_name} WHERE product_name='{name}'")
+        for row in in_data:
+            self.ui.tableWidget.setRowCount(i+1)
+            company_name = QtWidgets.QTableWidgetItem(f"{row[num_list[0]]}, Номер накладной: {row[num_list[1]]}")
+            count = QtWidgets.QTableWidgetItem(f"{row[num_list[2]]}")
+            self.ui.tableWidget.setItem(i, 0, company_name)
+            self.ui.tableWidget.setItem(i, num_list[3], count)
+            i += 1
+        return i
+        
     def table(self):
-        data = self.get_DB_data()
-        out_data = self.get_DB_data(False)
-        self.generate_table(data, out_data)
-       
+        try:
+            data = self.get_DB_data()
+            self.generate_table(data)
+        except:
+            self.else_info(text='Выберите товар')
+        
 
     def accept_product(self):
         name = self.ui.comboBox.currentText()
