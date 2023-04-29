@@ -2,12 +2,13 @@
 class Reader:
 
     @staticmethod
-    def read_file(check):
+    def read_file(check:bool):
         file_name = 'Приходная' if check else 'Расходная'
         data = []
         with open(f'files/{file_name}_накладная.txt', 'r', encoding='utf-8') as file:
             rows = file.readlines()
             for row in rows:
+                row = row.split(", ")
                 data.append(row)
         return data
     

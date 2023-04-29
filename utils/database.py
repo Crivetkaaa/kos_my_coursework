@@ -30,3 +30,13 @@ class DB:
         cur = conn.cursor()
         return conn, cur
     
+    @classmethod
+    def input_file(cls, data):
+        for row in data:
+            cls.execute(f"""INSERT INTO input_invoice (type_purchase, supplier, postponement, product_name, count, price, from_country, date, number) VALUES ('{row[0]}','{row[1]}','{row[2]}','{row[3]}','{row[4]}','{row[5]}','{row[6]}','{row[7]}','{row[8]}');""")
+
+    @classmethod
+    def output_file(cls, data):
+        for row in data:
+            cls.execute(f"INSERT INTO send_product (buyer, product_name, number, count, price, date, receipt) VALUES ('{row[0]}','{row[1]}','{row[2]}','{row[3]}','{row[4]}','{row[5]}','{row[6]}');")
+    
