@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(663, 416)
+        MainWindow.resize(663, 413)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
@@ -41,15 +41,24 @@ class Ui_MainWindow(object):
         self.tableWidget.horizontalHeader().setDefaultSectionSize(128)
         self.tableWidget.horizontalHeader().setMinimumSectionSize(39)
         self.comboBox = QtWidgets.QComboBox(self.tab)
-        self.comboBox.setGeometry(QtCore.QRect(10, 20, 161, 22))
+        self.comboBox.setGeometry(QtCore.QRect(80, 30, 161, 22))
         self.comboBox.setCurrentText("")
         self.comboBox.setObjectName("comboBox")
         self.pushButton_2 = QtWidgets.QPushButton(self.tab)
-        self.pushButton_2.setGeometry(QtCore.QRect(180, 20, 75, 23))
+        self.pushButton_2.setGeometry(QtCore.QRect(250, 30, 75, 23))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_3 = QtWidgets.QPushButton(self.tab)
-        self.pushButton_3.setGeometry(QtCore.QRect(550, 10, 91, 51))
+        self.pushButton_3.setGeometry(QtCore.QRect(430, 10, 101, 51))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton = QtWidgets.QPushButton(self.tab)
+        self.pushButton.setGeometry(QtCore.QRect(540, 10, 101, 51))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_4 = QtWidgets.QPushButton(self.tab)
+        self.pushButton_4.setGeometry(QtCore.QRect(330, 10, 101, 51))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_5 = QtWidgets.QPushButton(self.tab)
+        self.pushButton_5.setGeometry(QtCore.QRect(10, 30, 61, 23))
+        self.pushButton_5.setObjectName("pushButton_5")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -75,8 +84,13 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Конечный\n"
 "остаток"))
         self.pushButton_2.setText(_translate("MainWindow", "Добавить"))
-        self.pushButton_3.setText(_translate("MainWindow", "Сформировать\n"
+        self.pushButton_3.setText(_translate("MainWindow", "Отчёт:\n"
+"Движение товра"))
+        self.pushButton.setText(_translate("MainWindow", "Сбросить \n"
 "отчёт"))
+        self.pushButton_4.setText(_translate("MainWindow", "Отчёт:\n"
+"История товра"))
+        self.pushButton_5.setText(_translate("MainWindow", "Обновить"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Tab 1"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Tab 2"))
 
