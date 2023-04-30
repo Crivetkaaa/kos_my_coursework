@@ -16,7 +16,7 @@ class Interface(QtWidgets.QWidget):
         self.combobox()
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        self.ui.pushButton_4.clicked.connect(self.history)
+        self.ui.pushButton_4.clicked.connect(self.write_to_file)
         self.ui.pushButton_3.clicked.connect(self.table)
         self.ui.pushButton.clicked.connect(self.clear)
         self.ui.pushButton_2.clicked.connect(self.accept_product)
@@ -37,8 +37,27 @@ class Interface(QtWidgets.QWidget):
         msg.setIcon(QMessageBox.Warning)
         msg.exec_()
 
+    def write_to_file(self):
+        text = self.history()
+        Reader.write(text)
+
     def history(self):
-        pass
+        print(self.accept_data)
+        try:
+            in_data = DB.execute_res(f"SELECT * FROM input_invoice WHERE product_name='{self.accept_data[0]}'")
+            text = f"История товара {in_data[0][3]}\nТовар: {in_data[0][3]}.\nПриход: {in_data[0][7]}, Приходная накладная №{in_data[0][10]} от {in_data[0][2]},\nгарантийный талон поставщика № {in_data[0][9]}, срок гарантии {in_data[0][8]}.\n"
+            
+            try:
+                out_data = DB.execute_res(f"SELECT * FROM send_product WHERE product_name='{self.accept_data[0]}'")[0]
+                text += f"Продано: {out_data[4]}, Товарный чек № {out_data[-3]} {out_data[0]}, гарантийный талон №{out_data[-2]}, срок гарантии до {out_data[5]}."
+            except:
+                text += "Товар ещё не продан"
+
+            print(text)
+            return text
+        except:
+            self.else_info('Выберите товар')
+
 
     def clear(self):
         self.accept_data.clear()
@@ -58,7 +77,7 @@ class Interface(QtWidgets.QWidget):
 
     def get_count(self, checker, row):
         name = 'input_invoice' if checker else 'send_product'
-        count = 4 if checker else 3
+        count = 4 if checker else 2
         data_count = DB.execute_res(
             f"SELECT * FROM {name} WHERE product_name='{row[3]}'")
         re_count = 0
@@ -69,7 +88,6 @@ class Interface(QtWidgets.QWidget):
     def generate_table(self, data):
         i = 0
         for row in data:
-            print(row)
             self.ui.tableWidget.setRowCount(i+1)
             in_count = self.get_count(True, row)
             out_count = self.get_count(False, row)
@@ -88,10 +106,11 @@ class Interface(QtWidgets.QWidget):
 
     def update_table(self, i, name, checker):
         table_name = 'input_invoice' if checker else 'send_product'
-        num_list = [1, -1, 4, 2] if checker else [0, 2, 3, 3]
+        num_list = [2, -1, 4, 2] if checker else [0, -1, 2, 3]
         in_data = DB.execute_res(
             f"SELECT * FROM {table_name} WHERE product_name='{name}'")
         for row in in_data:
+            print(row)
             self.ui.tableWidget.setRowCount(i+1)
             company_name = QtWidgets.QTableWidgetItem(
                 f"{row[num_list[0]]}, Номер накладной: {row[num_list[1]]}")

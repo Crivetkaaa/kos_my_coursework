@@ -46,7 +46,7 @@
        <number>128</number>
       </attribute>
       <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>39</number>
+       <number>64</number>
       </attribute>
       <column>
        <property name="text">

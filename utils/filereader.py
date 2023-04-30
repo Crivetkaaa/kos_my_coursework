@@ -17,3 +17,7 @@ class Reader:
         file_name = 'Приходная' if check else 'Расходная'
         with open(f'files/{file_name}_накладная.txt', 'w', encoding='utf-8') as file:
             file.close()
+    @staticmethod
+    def write(text):
+        with open("files/Отчёт.txt", 'w', encoding='UTF-8') as file:
+                file.write(text)

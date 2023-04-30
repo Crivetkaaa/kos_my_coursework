@@ -35,10 +35,10 @@ class DB:
     def input_file(cls, data):
         for row in data:
             cls.execute(
-                f"""INSERT INTO input_invoice (type_purchase, supplier, postponement, product_name, count, price, from_country, date, number) VALUES ('{row[0]}','{row[1]}','{row[2]}','{row[3]}','{row[4]}','{row[5]}','{row[6]}','{row[7]}','{row[8]}');""")
+                f"""INSERT INTO input_invoice (type_purchase, supplier, postponement, product_name, count, price, from_country, date_input, date_guarantee, receipt, number) VALUES ('{row[0]}','{row[1]}','{row[2]}','{row[3]}','{row[4]}','{row[5]}','{row[6]}','{row[7]}','{row[8]}','{row[9]}','{row[10]}');""")
 
     @classmethod
     def output_file(cls, data):
         for row in data:
             cls.execute(
-                f"INSERT INTO send_product (buyer, product_name, number, count, price, date, receipt) VALUES ('{row[0]}','{row[1]}','{row[2]}','{row[3]}','{row[4]}','{row[5]}','{row[6]}');")
+                f"INSERT INTO send_product (buyer, product_name, count, price, date_output, data_guarantee, receipt, receipt_check, number) VALUES ('{row[0]}','{row[1]}','{row[2]}','{row[3]}','{row[4]}','{row[5]}','{row[6]}','{row[7]}','{row[8]}');")
