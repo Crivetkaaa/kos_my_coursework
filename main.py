@@ -27,8 +27,11 @@ class Interface(QtWidgets.QWidget):
         DB.input_file(data)
         data = Reader.read_file(False)
         DB.output_file(data)
-
         self.combobox()
+
+        # Reader.clear(True)
+        # Reader.clear(False)
+
 
     def else_info(self, text='Что-то пошло не так.'):
         msg = QMessageBox()
