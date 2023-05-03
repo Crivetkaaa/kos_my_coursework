@@ -44,8 +44,10 @@ class Interface(QtWidgets.QWidget):
 
     def write_to_file(self):
         text = self.history()
-        Reader.write(text)
-
+        try:
+            Reader.write(text)
+        except:
+            pass
     def history(self):
         try:
             in_data = DB.execute_res(f"SELECT * FROM input_invoice WHERE product_name='{self.accept_data[0]}'")
@@ -147,7 +149,10 @@ class Interface(QtWidgets.QWidget):
         for row in in_data:
             print(row[num_list[4]])
             date = datetime.datetime.strptime(row[num_list[4]], '%d.%m.%Y')
-            in_date = datetime.datetime.strptime(self.ui.lineEdit.text(), '%d.%m.%Y')
+            try:
+                in_date = datetime.datetime.strptime(self.ui.lineEdit.text(), '%d.%m.%Y')
+            except:
+                in_date = datetime.datetime.strptime('01.01.0001', '%d.%m.%Y')
             if date > in_date:
                 self.ui.tableWidget.setRowCount(i+1)
                 company_name = QtWidgets.QTableWidgetItem(
@@ -159,14 +164,11 @@ class Interface(QtWidgets.QWidget):
         return i
 
     def table(self):
-        data = self.get_DB_data()
-        self.generate_table(data)
-        
-        # try:
-        #     data = self.get_DB_data()
-        #     self.generate_table(data)
-        # except:
-        #     self.else_info(text='Выберите товар')
+        try:
+            data = self.get_DB_data()
+            self.generate_table(data)
+        except:
+            self.else_info(text='Выберите товар')
 
     def accept_product(self):
         name = self.ui.comboBox.currentText()
