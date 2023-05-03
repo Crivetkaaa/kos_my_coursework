@@ -88,6 +88,9 @@ class Interface(QtWidgets.QWidget):
             re_count += int(row[count])
         return re_count
 
+    def check_data(self):
+        pass
+
     def generate_table(self, data):
         i = 0
         for row in data:
@@ -96,10 +99,13 @@ class Interface(QtWidgets.QWidget):
             out_count = self.get_count(False, row)
 
             name = QtWidgets.QTableWidgetItem(row[3])
+            count = QtWidgets.QTableWidgetItem(row[3])
             in_c = QtWidgets.QTableWidgetItem(str(in_count))
             out_c = QtWidgets.QTableWidgetItem(str(out_count))
             remainder = QtWidgets.QTableWidgetItem(str(in_count-out_count))
             self.ui.tableWidget.setItem(i, 0, name)
+            self.ui.tableWidget.setItem(i, 1, count)
+
             self.ui.tableWidget.setItem(i, 2, in_c)
             self.ui.tableWidget.setItem(i, 3, out_c)
             self.ui.tableWidget.setItem(i, 4, remainder)
