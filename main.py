@@ -141,20 +141,21 @@ class Interface(QtWidgets.QWidget):
 
     def update_table(self, i, name, checker):
         table_name = 'input_invoice' if checker else 'send_product'
-        num_list = [2, -1, 4, 2, 7] if checker else [0, -1, 2, 3, 2]
+        num_list = [2, -1, 4, 2, 7] if checker else [0, -1, 2, 3, 4]
         in_data = DB.execute_res(
             f"SELECT * FROM {table_name} WHERE product_name='{name}'")
         for row in in_data:
-            print(row)
-            # date = datetime.datetime.strptime(row[num_list[4]], '%d.%m.%Y')
-            # if date > self.ui.lineEdit.text():
-            #     self.ui.tableWidget.setRowCount(i+1)
-            #     company_name = QtWidgets.QTableWidgetItem(
-            #         f"{row[num_list[0]]}, Номер накладной: {row[num_list[1]]}")
-            #     count = QtWidgets.QTableWidgetItem(f"{row[num_list[2]]}")
-            #     self.ui.tableWidget.setItem(i, 0, company_name)
-            #     self.ui.tableWidget.setItem(i, num_list[3], count)
-            #     i += 1
+            print(row[num_list[4]])
+            date = datetime.datetime.strptime(row[num_list[4]], '%d.%m.%Y')
+            in_date = datetime.datetime.strptime(self.ui.lineEdit.text(), '%d.%m.%Y')
+            if date > in_date:
+                self.ui.tableWidget.setRowCount(i+1)
+                company_name = QtWidgets.QTableWidgetItem(
+                    f"{row[num_list[0]]}, Номер накладной: {row[num_list[1]]}")
+                count = QtWidgets.QTableWidgetItem(f"{row[num_list[2]]}")
+                self.ui.tableWidget.setItem(i, 0, company_name)
+                self.ui.tableWidget.setItem(i, num_list[3], count)
+                i += 1
         return i
 
     def table(self):
