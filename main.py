@@ -1,3 +1,5 @@
+import csv
+import io
 from main_win import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
@@ -14,6 +16,7 @@ class Interface(QtWidgets.QWidget):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.all_data = []
         self.accept_data = []
         self.combobox()
         self.centralwidget = QtWidgets.QWidget(self)
@@ -48,6 +51,7 @@ class Interface(QtWidgets.QWidget):
             Reader.write(text)
         except:
             pass
+
     def history(self):
         try:
             in_data = DB.execute_res(f"SELECT * FROM input_invoice WHERE product_name='{self.accept_data[0]}'")
@@ -62,7 +66,6 @@ class Interface(QtWidgets.QWidget):
             return text
         except:
             self.else_info('Выберите товар')
-
 
     def clear(self):
         self.accept_data.clear()
@@ -124,7 +127,7 @@ class Interface(QtWidgets.QWidget):
             except:
                 in_count = self.get_count(True, row)
                 out_count = self.get_count(False, row)
-                counts = None
+                counts = 0
                 end_counts = in_count-out_count
             
             name = QtWidgets.QTableWidgetItem(row[3])
@@ -132,6 +135,8 @@ class Interface(QtWidgets.QWidget):
             in_c = QtWidgets.QTableWidgetItem(str(in_count))
             out_c = QtWidgets.QTableWidgetItem(str(out_count))
             remainder = QtWidgets.QTableWidgetItem(str(end_counts))
+            mini_data = [row[3], counts, in_count, out_count, end_counts]
+            self.all_data.append(mini_data)
             self.ui.tableWidget.setItem(i, 0, name)
             self.ui.tableWidget.setItem(i, 1, count)
             self.ui.tableWidget.setItem(i, 2, in_c) 
@@ -147,7 +152,7 @@ class Interface(QtWidgets.QWidget):
         in_data = DB.execute_res(
             f"SELECT * FROM {table_name} WHERE product_name='{name}'")
         for row in in_data:
-            print(row[num_list[4]])
+            print(row)
             date = datetime.datetime.strptime(row[num_list[4]], '%d.%m.%Y')
             try:
                 in_date = datetime.datetime.strptime(self.ui.lineEdit.text(), '%d.%m.%Y')
@@ -160,13 +165,27 @@ class Interface(QtWidgets.QWidget):
                 count = QtWidgets.QTableWidgetItem(f"{row[num_list[2]]}")
                 self.ui.tableWidget.setItem(i, 0, company_name)
                 self.ui.tableWidget.setItem(i, num_list[3], count)
+                print(num_list[3], row[num_list[2]])
+                if table_name == 'input_invoice':
+                    mini_date = [ f"{row[num_list[0]]} Номер накладной: {row[num_list[1]][0:-1]}", 0, row[4], 0, 0]
+                else:
+                    mini_date = [ f"{row[num_list[0]]} Номер накладной: {row[num_list[1]][0:-1]}", 0, 0, row[2], 0]
+                self.all_data.append(mini_date)
                 i += 1
         return i
+    
+    def save_table(self):
+        print("g")
+        with open('files/array.csv', 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            for row in self.all_data:
+                writer.writerow(row)
 
     def table(self):
         try:
             data = self.get_DB_data()
             self.generate_table(data)
+            self.save_table()
         except:
             self.else_info(text='Выберите товар')
 
